@@ -7,7 +7,7 @@ public class Evaluacion implements IProyecto {
     private Double nota;
 
     public Evaluacion() {
-//        setNota();
+
     }
 
     public Double getNota() {

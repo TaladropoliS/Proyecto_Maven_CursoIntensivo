@@ -6,10 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-/**
- *
- * @author Felipe Cuevas
- */
+
 public class  Persona implements IProyecto{
     protected String run, nombre;
     protected Date fechaN;
@@ -55,6 +52,4 @@ public class  Persona implements IProyecto{
             System.err.println("Error en el formato de fecha: " + e.getMessage());
         }
     }
-    
-    
 }

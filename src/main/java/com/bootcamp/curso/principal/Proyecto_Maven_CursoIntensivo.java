@@ -20,11 +20,11 @@ public class Proyecto_Maven_CursoIntensivo implements IProyecto {
                 System.out.println("3) Mostrar la SF de cada alumno de un curso especifico.");
                 System.out.println("4) Buscar un alumno por RUN en un curso especifico.");
                 System.out.println("5) Eliminar un alumno por RUN en un curso especifico.");
-                System.out.println("6) Exportar toda la informacion a un fichero Excel.");
-                System.out.println("7) Exportar toda la informacion a un fichero Pdf.");
+                System.out.println("6) Exportar toda la información a un fichero Excel.");
+                System.out.println("7) Exportar toda la información a un fichero Pdf.");
                 System.out.println("8) Salir.");
                 System.out.println("------------------------");
-                System.out.println("Ingrese su opcion: ");
+                System.out.println("Ingrese su opción: ");
                 op = leer.nextInt();
                 leer.nextLine();
                 switch (op) {
@@ -39,9 +39,9 @@ public class Proyecto_Maven_CursoIntensivo implements IProyecto {
                         break;
                     case 3:
                         for (CursoIntensivo cursoIntensivo : curso) {
-                            System.out.println("Codigo: " + cursoIntensivo.getCodigo() + " - Nombre: " + cursoIntensivo.getNombre());
+                            System.out.println("Código: " + cursoIntensivo.getCodigo() + " - Nombre: " + cursoIntensivo.getNombre());
                         }
-                        System.out.println("Ingrese el codigo del curso para mostrar SF: ");
+                        System.out.println("Ingrese el código del curso para mostrar SF: ");
                         int cod = leer.nextInt();
                         CursoIntensivo.mostrarSF(cod);
                         leer.nextLine();
@@ -52,8 +52,7 @@ public class Proyecto_Maven_CursoIntensivo implements IProyecto {
                         CursoIntensivo.buscarAlumno(run);
                         break;
                     case 5:
-//                        Eliminar un alumno por RUN en un curso especifico
-                        System.out.println("Ingrese el codigo del curso para eliminar un alumno: ");
+                        System.out.println("Ingrese el código del curso para eliminar un alumno: ");
                         int codCurso = leer.nextInt();
                         leer.nextLine();
                         System.out.println("Ingrese el RUN del alumno a eliminar: ");
@@ -62,23 +61,27 @@ public class Proyecto_Maven_CursoIntensivo implements IProyecto {
 
                         break;
                     case 6:
-                        System.out.println("Exportando la informacion a un fichero Excel...");
-                        CursoIntensivo.exportarInformacionAExcel();
+                        System.out.println("Ingrese el nombre del fichero: ");
+                        String nombreFicheroExcel = leer.nextLine();
+                        System.out.println("Exportando la información a un fichero Excel...");
+                        CursoIntensivo.exportarInformacionAExcel(nombreFicheroExcel);
                         break;
                     case 7:
-                        System.out.println("Exportando la informacion a un fichero Pdf...");
-                        CursoIntensivo.exportarInformacionAPdf();
+                        System.out.println("Ingrese el nombre del fichero: ");
+                        String nombreFicheroPdf = leer.nextLine();
+                        System.out.println("Exportando la información a un fichero Pdf...");
+                        CursoIntensivo.exportarInformacionAPdf(nombreFicheroPdf);
                         break;
                     case 8:
                         System.out.println("Finalizando el algoritmo.");
                         break;
                     default:
-                        System.err.println("Opcion inválida.");
+                        System.err.println("Opción inválida.");
                         break;
                 }
             } while (op < 8);
         } catch (Exception e) {
-            System.err.println("Error de la aplicacion: " + e.getMessage());
+            System.err.println("Error de la aplicación: " + e.getMessage());
         }
     }
 }

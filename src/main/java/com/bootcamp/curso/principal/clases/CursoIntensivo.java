@@ -18,9 +18,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
 
 public class CursoIntensivo implements IProyecto {
     private Integer codigo, asistenciaMinima;
@@ -170,23 +167,20 @@ public class CursoIntensivo implements IProyecto {
         }
     }
 
-    public static void exportarInformacionAExcel() {
+    public static void exportarInformacionAExcel(String nombreFicheroExcel) {
 
-        String dest = "informacion_cursos.xlsx";
-
+        String dest = "src/ficheros/" + nombreFicheroExcel + ".xlsx";
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Cursos y Alumnos");
-
 
         CellStyle headerStyle = workbook.createCellStyle();
         Font headerFont = workbook.createFont();
         headerFont.setBold(true);
         headerStyle.setFont(headerFont);
 
-
         Row headerRow = sheet.createRow(0);
-        String[] headers = {"Curso", "Relator", "Alumno", "Promedio", "Estado"};
+        String[] headers = {"Código", "Curso", "Asistencia mínima", "Relator", "Sueldo", "Alumno", "Promedio", "Estado"};
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
@@ -195,15 +189,16 @@ public class CursoIntensivo implements IProyecto {
 
         int rowNum = 1;
 
-
         for (CursoIntensivo curso : Proyecto_Maven_CursoIntensivo.curso) {
             for (Alumno alumno : curso.getCurso()) {
                 Row row = sheet.createRow(rowNum++);
 
-
-                row.createCell(0).setCellValue(curso.getNombre());
-                row.createCell(1).setCellValue(curso.getRelator().getNombre());
-                row.createCell(2).setCellValue(alumno.getNombre());
+                row.createCell(0).setCellValue(curso.getCodigo());
+                row.createCell(1).setCellValue(curso.getNombre());
+                row.createCell(2).setCellValue(curso.getAsistenciaMinima());
+                row.createCell(3).setCellValue(curso.getRelator().getNombre());
+                row.createCell(4).setCellValue(curso.getRelator().getSueldo());
+                row.createCell(5).setCellValue(alumno.getNombre());
 
                 double promedio = calcularPromedio(alumno);
                 int asistencia = alumno.getAsistencia();
@@ -219,17 +214,14 @@ public class CursoIntensivo implements IProyecto {
                 } else {
                     estado = "SF: RR";
                 }
-
-                row.createCell(3).setCellValue(promedio);
-                row.createCell(4).setCellValue(estado);
+                row.createCell(6).setCellValue(promedio);
+                row.createCell(7).setCellValue(estado);
             }
         }
-
 
         for (int i = 0; i < headers.length; i++) {
             sheet.autoSizeColumn(i);
         }
-
 
         try (FileOutputStream fileOut = new FileOutputStream(dest)) {
             workbook.write(fileOut);
@@ -245,8 +237,8 @@ public class CursoIntensivo implements IProyecto {
         }
     }
 
-    public static void exportarInformacionAPdf() {
-        String dest = "informacion_cursos.pdf";
+    public static void exportarInformacionAPdf(String nombreFicheroPdf) {
+        String dest = "src/ficheros/" + nombreFicheroPdf + ".pdf";
         try {
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream(dest));
@@ -256,12 +248,14 @@ public class CursoIntensivo implements IProyecto {
 
             for (CursoIntensivo curso : Proyecto_Maven_CursoIntensivo.curso) {
                 document.add(new Paragraph("Curso: " + curso.getNombre() + " (Código: " + curso.getCodigo() + ")"));
-                document.add(new Paragraph("Relator: " + curso.getRelator().getNombre()));
+                document.add(new Paragraph("Relator: " + curso.getRelator().getNombre() + " (Sueldo $ " + curso.getRelator().getSueldo() + ")"));
+                document.add(new Paragraph("Asistencia Mínima: " + curso.getAsistenciaMinima()));
 
-                // Crear una tabla con 3 columnas (Alumno, Promedio, Estado)
-                PdfPTable table = new PdfPTable(3);
+
+                PdfPTable table = new PdfPTable(4);
                 table.addCell("Alumno");
                 table.addCell("Promedio");
+                table.addCell("Asistencia");
                 table.addCell("Estado");
 
                 for (Alumno alumno : curso.getCurso()) {
@@ -280,9 +274,9 @@ public class CursoIntensivo implements IProyecto {
                         estado = "SF: RR";
                     }
 
-                    // Añadir los datos del alumno a la tabla
                     table.addCell(alumno.getNombre());
                     table.addCell(String.valueOf(promedio));
+                    table.addCell(String.valueOf(asistencia));
                     table.addCell(estado);
                 }
 
@@ -296,5 +290,4 @@ public class CursoIntensivo implements IProyecto {
             System.out.println("Error al escribir el archivo PDF: " + e.getMessage());
         }
     }
-
 }

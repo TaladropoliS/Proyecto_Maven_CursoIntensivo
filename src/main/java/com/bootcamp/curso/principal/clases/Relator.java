@@ -28,6 +28,4 @@ public class Relator extends Persona{
         sueldo = leer.nextDouble();
         leer.nextLine();
     }
-    
-    
 }
