@@ -12,6 +12,15 @@ import java.util.Optional;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 
 public class CursoIntensivo implements IProyecto {
     private Integer codigo, asistenciaMinima;
@@ -233,6 +242,58 @@ public class CursoIntensivo implements IProyecto {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void exportarInformacionAPdf() {
+        String dest = "informacion_cursos.pdf";
+        try {
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(dest));
+
+            document.open();
+            document.add(new Paragraph("Informe de Cursos y Alumnos"));
+
+            for (CursoIntensivo curso : Proyecto_Maven_CursoIntensivo.curso) {
+                document.add(new Paragraph("Curso: " + curso.getNombre() + " (Código: " + curso.getCodigo() + ")"));
+                document.add(new Paragraph("Relator: " + curso.getRelator().getNombre()));
+
+                // Crear una tabla con 3 columnas (Alumno, Promedio, Estado)
+                PdfPTable table = new PdfPTable(3);
+                table.addCell("Alumno");
+                table.addCell("Promedio");
+                table.addCell("Estado");
+
+                for (Alumno alumno : curso.getCurso()) {
+                    double promedio = calcularPromedio(alumno);
+                    int asistencia = alumno.getAsistencia();
+                    int asistenciaMinima = curso.getAsistenciaMinima();
+                    String estado;
+
+                    if (promedio >= 4.0 && asistencia >= asistenciaMinima) {
+                        estado = "SF: AA";
+                    } else if (promedio >= 4.0) {
+                        estado = "SF: RI";
+                    } else if (promedio < 4.0 && asistencia >= asistenciaMinima) {
+                        estado = "SF: RN";
+                    } else {
+                        estado = "SF: RR";
+                    }
+
+                    // Añadir los datos del alumno a la tabla
+                    table.addCell(alumno.getNombre());
+                    table.addCell(String.valueOf(promedio));
+                    table.addCell(estado);
+                }
+
+                document.add(table);
+                document.add(new Paragraph("\n"));
+            }
+
+            document.close();
+            System.out.println("PDF generado exitosamente en: " + dest);
+        } catch (FileNotFoundException | DocumentException e) {
+            System.out.println("Error al escribir el archivo PDF: " + e.getMessage());
         }
     }
 

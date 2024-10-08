@@ -20,8 +20,9 @@ public class Proyecto_Maven_CursoIntensivo implements IProyecto {
                 System.out.println("3) Mostrar la SF de cada alumno de un curso especifico.");
                 System.out.println("4) Buscar un alumno por RUN en un curso especifico.");
                 System.out.println("5) Eliminar un alumno por RUN en un curso especifico.");
-                System.out.println("6) Exportar toda la informacion a un fichero.");
-                System.out.println("7) Salir.");
+                System.out.println("6) Exportar toda la informacion a un fichero Excel.");
+                System.out.println("7) Exportar toda la informacion a un fichero Pdf.");
+                System.out.println("8) Salir.");
                 System.out.println("------------------------");
                 System.out.println("Ingrese su opcion: ");
                 op = leer.nextInt();
@@ -61,16 +62,21 @@ public class Proyecto_Maven_CursoIntensivo implements IProyecto {
 
                         break;
                     case 6:
+                        System.out.println("Exportando la informacion a un fichero Excel...");
                         CursoIntensivo.exportarInformacionAExcel();
                         break;
                     case 7:
+                        System.out.println("Exportando la informacion a un fichero Pdf...");
+                        CursoIntensivo.exportarInformacionAPdf();
+                        break;
+                    case 8:
                         System.out.println("Finalizando el algoritmo.");
                         break;
                     default:
                         System.err.println("Opcion inválida.");
                         break;
                 }
-            } while (op < 7);
+            } while (op < 8);
         } catch (Exception e) {
             System.err.println("Error de la aplicacion: " + e.getMessage());
         }
