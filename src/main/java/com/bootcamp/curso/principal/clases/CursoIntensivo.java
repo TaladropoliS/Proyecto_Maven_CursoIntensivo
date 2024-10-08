@@ -2,16 +2,16 @@ package com.bootcamp.curso.principal.clases;
 
 import com.bootcamp.curso.principal.Proyecto_Maven_CursoIntensivo;
 import com.bootcamp.curso.principal.interfaces.IProyecto;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 
 public class CursoIntensivo implements IProyecto {
     private Integer codigo, asistenciaMinima;
@@ -161,55 +161,79 @@ public class CursoIntensivo implements IProyecto {
         }
     }
 
-    public static void exportarInformacion() {
-        String dest = "informacion_cursos.pdf";
-        try {
-            PdfWriter writer = new PdfWriter(dest);
+    public static void exportarInformacionAExcel() {
 
-            PdfDocument pdf = new PdfDocument(writer);
-            Document document = new Document(pdf);
+        String dest = "informacion_cursos.xlsx";
 
-            document.add(new Paragraph("Informe de Cursos y Alumnos"));
 
-            for (CursoIntensivo curso : Proyecto_Maven_CursoIntensivo.curso) {
-                document.add(new Paragraph("Curso: " + curso.getNombre() + " (Código: " + curso.getCodigo() + ")"));
-                document.add(new Paragraph("Relator: " + curso.getRelator().getNombre()));
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Cursos y Alumnos");
 
-                Table table = new Table(3);
-                table.addCell("Nombre del Alumno");
-                table.addCell("Promedio");
-                table.addCell("Estado");
 
-                for (Alumno alumno : curso.getCurso()) {
-                    double promedio = calcularPromedio(alumno);
-                    int asistencia = alumno.getAsistencia();
-                    int asistenciaMinima = curso.getAsistenciaMinima();
-                    String estado;
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
 
-                    if (promedio >= 4.0 && asistencia >= asistenciaMinima) {
-                        estado = "SF: AA";
-                    } else if (promedio >= 4.0) {
-                        estado = "SF: RI";
-                    } else if (promedio < 4.0 && asistencia >= asistenciaMinima) {
-                        estado = "SF: RN";
-                    } else {
-                        estado = "SF: RR";
-                    }
 
-                    table.addCell(alumno.getNombre());
-                    table.addCell(String.valueOf(promedio));
-                    table.addCell(estado);
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"Curso", "Relator", "Alumno", "Promedio", "Estado"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        int rowNum = 1;
+
+
+        for (CursoIntensivo curso : Proyecto_Maven_CursoIntensivo.curso) {
+            for (Alumno alumno : curso.getCurso()) {
+                Row row = sheet.createRow(rowNum++);
+
+
+                row.createCell(0).setCellValue(curso.getNombre());
+                row.createCell(1).setCellValue(curso.getRelator().getNombre());
+                row.createCell(2).setCellValue(alumno.getNombre());
+
+                double promedio = calcularPromedio(alumno);
+                int asistencia = alumno.getAsistencia();
+                int asistenciaMinima = curso.getAsistenciaMinima();
+                String estado;
+
+                if (promedio >= 4.0 && asistencia >= asistenciaMinima) {
+                    estado = "SF: AA";
+                } else if (promedio >= 4.0) {
+                    estado = "SF: RI";
+                } else if (promedio < 4.0 && asistencia >= asistenciaMinima) {
+                    estado = "SF: RN";
+                } else {
+                    estado = "SF: RR";
                 }
 
-                document.add(table);
-
-                document.add(new Paragraph("\n"));
+                row.createCell(3).setCellValue(promedio);
+                row.createCell(4).setCellValue(estado);
             }
+        }
 
-            document.close();
-            System.out.println("PDF generado exitosamente en: " + dest);
-        } catch (FileNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+
+        try (FileOutputStream fileOut = new FileOutputStream(dest)) {
+            workbook.write(fileOut);
+            System.out.println("Excel generado exitosamente en: " + dest);
+        } catch (IOException e) {
+            System.out.println("Error al escribir el archivo Excel: " + e.getMessage());
+        } finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
+
 }

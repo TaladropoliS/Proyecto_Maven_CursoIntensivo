@@ -61,7 +61,7 @@ public class Proyecto_Maven_CursoIntensivo implements IProyecto {
 
                         break;
                     case 6:
-                        CursoIntensivo.exportarInformacion();
+                        CursoIntensivo.exportarInformacionAExcel();
                         break;
                     case 7:
                         System.out.println("Finalizando el algoritmo.");

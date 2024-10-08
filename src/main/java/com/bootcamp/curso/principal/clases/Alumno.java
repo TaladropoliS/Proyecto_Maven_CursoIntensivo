@@ -40,9 +40,10 @@ public class Alumno extends Persona {
         }
 
         for (int i = 0; i < cant; i++) {
-            System.out.println("Ingrese Nota " + (i + 1) + ":");
+//            System.out.println("Ingrese Nota " + (i + 1) + ":");
+            int nro = i + 1;
             Evaluacion e = new Evaluacion();
-            e.setNota();
+            e.setNota(nro);
             evaluaciones.add(e);
         }
     }
